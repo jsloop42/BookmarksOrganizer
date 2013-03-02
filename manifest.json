@@ -1,0 +1,13 @@
+{
+    "name": "Bookmarks Organizer",
+    "version": "0.1.0",
+    "manifest_version": 2,
+    "author": "kadaj (Jaseem V V)",
+    "description": "Organize Bookmarks",
+    "permissions": ["bookmarks"],
+    "browser_action": {
+        "default_title": "Bookmarks Organizer (by kadaj)",
+        "default_icon": "res/icons/bo16.png",
+        "default_popup": "bookmarks-organizer.html"
+    }
+}
