@@ -26,11 +26,17 @@ BookmarksOrganizer.prototype = (function () {
         getOtherBookmarksId: function () {
             return OTHER_BOOKMARKS_ID; //string
         },
-        // Retrives all the bookmarks in the Bookmarks bar
+        // Retrives all the Bookmarks bar node
         // @param {function} callback
-        getAllBookmarksInBookmarksBar: function (callback) {
+        getBookmarksBarNode: function (callback) {
             if (typeof callback !== "function") throw new Error("callback parameter is required");
             chrome.bookmarks.getSubTree(this.getBookmarksBarId(), callback);
+        },
+        // Retrives the Other bookmarks node
+        // @param {function} callback
+        getOtherBookmarksNode: function (callback) {
+            if (typeof callback !== "function") throw new Error("callback parameter is required");
+            chrome.bookmarks.getSubTree(this.getOtherBookmarksId(), callback);
         }
     };
 })();

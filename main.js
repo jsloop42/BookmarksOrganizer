@@ -8,7 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
         bo.getAllBookmarks(function (bnodes) {
             console.log(bnodes);
         });
-        bo.getAllBookmarksInBookmarksBar(function (bnodes) {
+        bo. getBookmarksBarNode(function (bnodes) {
+            console.log(bnodes);
+        });
+        bo. getOtherBookmarksNode(function (bnodes) {
             console.log(bnodes);
         });
     });
