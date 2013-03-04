@@ -1,0 +1,6 @@
+.git
+.gitignore
+bin
+res/icons/*.fla
+build.sh
+buildExcludes

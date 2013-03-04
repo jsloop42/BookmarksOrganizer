@@ -1,0 +1,27 @@
+.reorder-btn-generic {
+    cursor: pointer;
+    padding: 0.2em 0.5em;
+    border-radius: .4em;
+    font-size: 12px;
+    font-family: sans-serif;
+    text-shadow: 0px 0px 3px lightseagreen;
+    text-rendering: geometricPrecision;
+}
+.reorder-btn {
+    background: lightblue;
+}
+.reorder-btn:hover {
+    background: lightskyblue;
+}
+.reorder-btn:active {
+    background: lightgreen;
+}
+.display-none {
+    display: none;
+}
+.status-txt {
+    font-size: 11px;
+    color: darksalmon;
+    text-shadow: 0px 0px 5px lightgoldenrodyellow;
+    text-rendering: geometricPrecision;
+}

@@ -1,10 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var sortBtn = document.querySelector('.sortBtn');
-    sortBtn.addEventListener('click', function (e) {
+    var reorderBtn = document.querySelector('.reorderBtn'),
+        statusTxt = document.querySelector('.statusTxt'),
+        boState = {}, totalNodes = 0, nodesProcessed = 0;
+    boStatus = localStorage.getItem('boStatus');
+    if (boStatus && boStatus === "in_progress") {
+        reorderBtn.style.display = "none";
+        statusTxt.innerHTML = "Sorting..";
+        statusTxt.style.display = "block";
+    } else {
+        reorderBtn.style.display = "block";
+        statusTxt.style.display = "none";
+    }
+    reorderBtn.addEventListener('click', function (e) {
+        localStorage.setItem('boStatus', 'in_progress');
+        reorderBtn.style.display = "none";
+        statusTxt.innerHTML = "Sorting..";
+        statusTxt.style.display = "block";
         console.log("button selected");
         var bo, bbId = "", bbNodes = [], worker;
         bo = new BookmarksOrganizer();
         bbId = bo.getBookmarksBarId();
+        console.log("max writes per min: " , bo.getMaxSustainedWritesPerMin());
+        console.log("max writes per hour: ", bo.getMaxWritesPerHour());
+        chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR = 60000;
+        chrome.bookmarks.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE = 1000;
         bo.getAllBookmarks(function (bNodes) {
             console.log(bNodes);
         });
@@ -28,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 beginIndex = 0,         // will contain the begin index for leaf nodes
                 aTitle = "",            // title of the first elem in sorting two elems
                 bTitle = "";            // title of the second elem in sorting
+            totalNodes = totalNodes + nodes.length;
             if (nodes && nodes.length > 0) {
                 len = nodes.length;
                 for (i in nodes) {
@@ -52,11 +72,28 @@ document.addEventListener('DOMContentLoaded', function () {
                     leafs[i].index = beginIndex;
                     beginIndex = beginIndex + 1;
                 }
-
                 console.log("Sorted leafs: %o", leafs);
-                bo.moveBookmarks(leafs, function (res) {
-                    console.log("leaf nodes updated");
-                });
+                try {
+                    bo.moveBookmarks(leafs, function (res) {
+                        console.log(res);
+                        if (!res) {
+                            // TODO: update status text
+                            localStorage.removeItem('boStatus');
+                            console.log("err moving");
+                            return false;
+                        }
+                        console.log("leaf nodes updated");
+                        nodesProcessed = nodesProcessed + 1;
+                        if (nodesProcessed === totalNodes) {
+                            console.log("pNodes: Reorder completed");
+                            reorderBtn.style.display = "block";
+                            statusTxt.style.display = "none";
+                            localStorage.removeItem('boStatus')
+                        }
+                    });
+                } catch (ex) {
+                    console.log("l:Exception: ", ex);
+                }
                 if (pNodes.length > 0) {
                     aTitle = "";
                     bTitle = "";
@@ -69,9 +106,27 @@ document.addEventListener('DOMContentLoaded', function () {
                        pNodes[i].index = i;
                     }
                     console.log("Sorted pNodes: %o", pNodes);
-                    bo.moveBookmarks(pNodes, function (res) {
-                        console.log("parent nodes updated: " + res.title);
-                    });
+                    try {
+                        bo.moveBookmarks(pNodes, function (res) {
+                            console.log(res);
+                            if (!res) {
+                                // TODO: update status text
+                                localStorage.removeItem('boStatus');
+                                console.log("err moving");
+                                return false;
+                            }
+                            console.log("parent nodes updated: " + res.title);
+                            nodesProcessed = nodesProcessed + 1;
+                            if (nodesProcessed === totalNodes) {
+                                console.log("pNodes: Reorder completed");
+                                reorderBtn.style.display = "block";
+                                statusTxt.style.display = "none";
+                                localStorage.removeItem('boStatus');
+                            }
+                        });
+                    } catch (ex) {
+                        console.log("p:Exception: ", ex);
+                    }
                     for (i=0; i < pNodes.length; i++) {
                         console.log("calling sort on children of " + pNodes[i].title);
                         sortByTitle(pNodes[i].children);

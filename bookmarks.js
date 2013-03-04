@@ -50,6 +50,18 @@ BookmarksOrganizer.prototype = (function () {
                     if (typeof callback === "function") callback(res);
                 });
             }
+        },
+        getMaxSustainedWritesPerMin: function () {
+            return chrome.bookmarks.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE;
+        },
+        setMaxSustainedWritesPerMin: function (n) {
+            chrome.bookmarks.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE = n;
+        },
+        getMaxWritesPerHour: function () {
+            return chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR;
+        },
+        setMaxWritesPerHour: function (n) {
+            chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR = n;
         }
     };
 })();
