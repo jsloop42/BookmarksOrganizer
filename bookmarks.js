@@ -1,10 +1,10 @@
-// bookmarks organizer
+// bookmarks organizer model
 // (c) 2013 kadaj
 
 // class
-function BookmarksOrganizer() {}
+function Bookmark() {}
 
-BookmarksOrganizer.prototype = (function () {
+Bookmark.prototype = (function () {
     // private
     var BOOKMARKS_BAR_ID = "1",
         OTHER_BOOKMARKS_ID = "2";
@@ -26,11 +26,18 @@ BookmarksOrganizer.prototype = (function () {
         getOtherBookmarksId: function () {
             return OTHER_BOOKMARKS_ID; //string
         },
+        // Returns bookmarks tree for the given id
+        // @param {string} id Node id
+        // @param {function} callback
+        getBookmarksSubTree: function (id, callback) {
+            if (typeof callback !== "function") throw new Error("callback parameter is required");
+            chrome.bookmarks.getSubTree(id, callback);
+        },
         // Retrives all the Bookmarks bar node
         // @param {function} callback
         getBookmarksBarNode: function (callback) {
             if (typeof callback !== "function") throw new Error("callback parameter is required");
-            chrome.bookmarks.getSubTree(this.getBookmarksBarId(), callback);
+            this.getBookmarksSubTree(this.getBookmarksBarId(), callback);
         },
         // Retrives the Other bookmarks node
         // @param {function} callback
@@ -62,6 +69,19 @@ BookmarksOrganizer.prototype = (function () {
         },
         setMaxWritesPerHour: function (n) {
             chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR = n;
+        },
+        // calls the given callback function on new bookmarks
+        // @param {function} callback
+        onBookmarksChange: function (callback) {
+            if (typeof callback !== "function") throw new Error('callback function is required')
+            chrome.bookmarks.onCreated.addListener(function (id, res) {
+                res.event = "onCreated";
+                callback(id, res);
+            });
+            chrome.bookmarks.onMoved.addListener(function (id, res) {
+                res.event = "onMoved";
+                callback(id, res);
+            });
         }
     };
 })();

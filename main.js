@@ -1,7 +1,11 @@
+// bookmarks organizer view-controller
+// (c) 2013 kadaj
 document.addEventListener('DOMContentLoaded', function () {
     var reorderBtn = document.querySelector('.reorderBtn'),
         statusTxt = document.querySelector('.statusTxt'),
-        boState = {}, totalNodes = 0, nodesProcessed = 0;
+        boState = {}, totalNodes = 0, nodesProcessed = 0, bm;
+    bm = new Bookmark();
+    // bookmark status
     boStatus = localStorage.getItem('boStatus');
     if (boStatus && boStatus === "in_progress") {
         reorderBtn.style.display = "none";
@@ -11,23 +15,45 @@ document.addEventListener('DOMContentLoaded', function () {
         reorderBtn.style.display = "block";
         statusTxt.style.display = "none";
     }
+    // new bookmark or on move event handler
+    bm.onBookmarksChange(function (id, bNode) {
+        var parentId;
+        console.log("new bookmark created");
+        console.log(id);
+        console.log(bNode);
+        switch (bNode.event) {
+        case "onCreated":
+            parentId = bNode.parentId;
+            break;
+        case "onMoved":
+            parentId = bNode.parentId;
+            break;
+        }
+        bm.getBookmarksSubTree(bNode.parentId, function (node) {
+            var pNode;
+            console.log("parent node %o", node);
+            if (node.length !== 1) throw new Error("Error in obtained parent node");
+            pNode = node[0];
+            console.log("pNode: %o", pNode);
+        });
+    });
+    // reorder click event listener
     reorderBtn.addEventListener('click', function (e) {
         localStorage.setItem('boStatus', 'in_progress');
         reorderBtn.style.display = "none";
         statusTxt.innerHTML = "Sorting..";
         statusTxt.style.display = "block";
         console.log("button selected");
-        var bo, bbId = "", bbNodes = [], worker;
-        bo = new BookmarksOrganizer();
-        bbId = bo.getBookmarksBarId();
-        console.log("max writes per min: " , bo.getMaxSustainedWritesPerMin());
-        console.log("max writes per hour: ", bo.getMaxWritesPerHour());
+        var bbId = "", bbNodes = [], worker;
+        bbId = bm.getBookmarksBarId();
+        console.log("max writes per min: " , bm.getMaxSustainedWritesPerMin());
+        console.log("max writes per hour: ", bm.getMaxWritesPerHour());
         chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR = 60000;
         chrome.bookmarks.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE = 1000;
-        bo.getAllBookmarks(function (bNodes) {
+        bm.getAllBookmarks(function (bNodes) {
             console.log(bNodes);
         });
-        bo. getBookmarksBarNode(function (bNodes) {
+        bm. getBookmarksBarNode(function (bNodes) {
             console.log(bNodes);
             if (bNodes.length === 1) bbNodes = bNodes[0];
             else throw new Error("Error getting bookmarks from Bookmarks bar");
@@ -74,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 console.log("Sorted leafs: %o", leafs);
                 try {
-                    bo.moveBookmarks(leafs, function (res) {
+                    bm.moveBookmarks(leafs, function (res) {
                         console.log(res);
                         if (!res) {
                             // TODO: update status text
@@ -107,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     console.log("Sorted pNodes: %o", pNodes);
                     try {
-                        bo.moveBookmarks(pNodes, function (res) {
+                        bm.moveBookmarks(pNodes, function (res) {
                             console.log(res);
                             if (!res) {
                                 // TODO: update status text
@@ -140,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 //worker.postMessage('hello');
             } // else ? (TODO: think later)
         }
-        // bo. getOtherBookmarksNode(function (bNodes) {
+        // bm. getOtherBookmarksNode(function (bNodes) {
         //     console.log(bNodes);
         // });
     });
