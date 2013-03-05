@@ -2,7 +2,9 @@
 // (c) 2013 kadaj
 
 // class
-function Bookmark() {}
+function Bookmark() {
+    console.log("obj of Bookmark created");
+}
 
 Bookmark.prototype = (function () {
     // private

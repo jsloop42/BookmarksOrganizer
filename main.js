@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log("leaf nodes updated");
                     nodesProcessed = nodesProcessed + 1;
                     if (nodesProcessed === totalNodes) {
-                        console.log("pNodes: Reorder completed");
+                        console.log("leafs: Reorder completed");
                         reorderBtn.style.display = "block";
                         statusTxt.style.display = "none";
                         localStorage.removeItem('boStatus')
@@ -140,13 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             }
-            //worker = new Worker('worker.js');
-            //worker.addEventListener('message', function (e) {
-            //    console.log("message from worker: ", e.data);
-            //}, false);
-            //// send data to worker
-            //worker.postMessage('hello');
-        } // else ? (TODO: think later)
+        }
     }
 
     // reorder click event listener
@@ -156,26 +150,21 @@ document.addEventListener('DOMContentLoaded', function () {
         statusTxt.innerHTML = "Sorting..";
         statusTxt.style.display = "block";
         console.log("button selected");
-        var bbNodes = [], worker;
+        var bbNodes = [];
         console.log("max writes per min: " , bm.getMaxSustainedWritesPerMin());
         console.log("max writes per hour: ", bm.getMaxWritesPerHour());
         chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR = 60000;
         chrome.bookmarks.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE = 1000;
-        bm.getAllBookmarks(function (bNodes) {
-            console.log(bNodes);
-        });
-        bm.getBookmarksBarNode(function (bNodes) {
+        bm.getBookmarksBarNode(onBookmarksObtained);
+        bm.getOtherBookmarksNode(onBookmarksObtained);
+        function onBookmarksObtained (bNodes) {
             console.log(bNodes);
             if (bNodes.length === 1) bbNodes = bNodes[0];
-            else throw new Error("Error getting bookmarks from Bookmarks bar");
+            else throw new Error("Error getting bookmarks");
             console.log(bbNodes);
             if (bbNodes.hasOwnProperty('children') && bbNodes.children.length > 1) {
                 sortByTitle(bbNodes.children, true);
             }
-        });
-        // bm. getOtherBookmarksNode(function (bNodes) {
-        //     console.log(bNodes);
-        // });
+        }
     });
 });
-
