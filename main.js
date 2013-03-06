@@ -1,10 +1,15 @@
 // bookmarks organizer view-controller
+// This script is loaded when user clicks on the extension's icon
 // (c) 2013 kadaj
+
 document.addEventListener('DOMContentLoaded', function () {
     var reorderBtn = document.querySelector('.reorderBtn'),
         statusTxt = document.querySelector('.statusTxt'),
-        boState = {}, totalNodes = 0, nodesProcessed = 0, bm;
-    bm = new Bookmark();
+        boState = {},
+        totalNodes = 0,
+        nodesProcessed = 0,
+        bm = new Bookmark();
+    
     // bookmark status
     boStatus = localStorage.getItem('boStatus');
     if (boStatus && boStatus === "in_progress") {
@@ -71,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                     }
                                     console.log("leaf nodes updated");
                                     nodesProcessed = nodesProcessed + 1;
-                                    console.log("totalNodes ", totalNodes);
-                                    console.log("nodesProcessed ", nodesProcessed);
+                                    console.log("totalNodes %d", totalNodes);
+                                    console.log("nodesProcessed %d", nodesProcessed);
                                     if (nodesProcessed === totalNodes) {
                                         console.log("pNodes: Reorder completed");
                                         reorderBtn.style.display = "block";
