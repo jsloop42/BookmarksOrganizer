@@ -1,8 +1,8 @@
 var totalNodes = 0, nodesProcessed = 0;
 
-chrome.bookmarks.onMoved.addListener(function (id, node) {
-    node.event = "onMoved";
-
+chrome.bookmarks.onMoved.addListener(onBookmarkChange);
+chrome.bookmarks.onCreated.addListener(onBookmarkChange);
+function onBookmarkChange (id, node) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
         console.log(e);
@@ -97,4 +97,4 @@ chrome.bookmarks.onMoved.addListener(function (id, node) {
     }
     xhr.open("GET", chrome.extension.getURL('bookmark.js'), true);
     xhr.send();
-});
+}
