@@ -42,88 +42,30 @@ KDJ.BO = {
                     if (pNode.hasOwnProperty('children') && pNode.children.length > 1) {
                         //sortByTitle(pNode.children, false);
                         KDJ.BO.totalNodes = KDJ.BO.totalNodes + pNode.children.length;
-                        worker = new Worker('sortWorker.js');
-                        worker.addEventListener('message', function (e) {
-                            console.log("worker: ", e.data);
-                            if (e.data.hasOwnProperty('action') && e.data.hasOwnProperty('type') && e.data.type === "response") {
-                                switch (e.data.action) {
-                                case "sort":
-                                    var result = e.data.result;
-                                    var sortedNode = result.node;
-                                    var args = (function () { return e.data.hasOwnProperty('args') ? e.data.args : {}})();
-                                    switch (result.nodeType) {
-                                    case "leaf":
-                                        try {
-                                            bm.moveBookmarks(sortedNode, function (res) {
-                                                console.log(res);
-                                                if (!res) {
-                                                    // TODO: update status text
-                                                    localStorage.removeItem('boStatus');
-                                                    console.log("err moving");
-                                                    worker.terminate();
-                                                    return false;
-                                                }
-                                                console.log("leaf nodes updated");
-                                                KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
-                                                console.log("totalNodes %d", KDJ.BO.totalNodes);
-                                                console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
-                                                if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
-                                                    console.log("pNodes: Reorder completed");
-                                                    //reorderBtn.style.display = "block";
-                                                    //statusTxt.style.display = "none";
-                                                    //localStorage.removeItem('boStatus');
-                                                    worker.terminate();
-                                                }
-                                            });
-                                        } catch (ex) {
-                                            console.log("leaf node reorder exception: ", ex);
-                                        }
-                                        break;
-                                    case "root":
-                                        try {
-                                            bm.moveBookmarks(sortedNode, function (res) {
-                                                console.log(res);
-                                                if (!res) {
-                                                    // TODO: update status text
-                                                    localStorage.removeItem('boStatus');
-                                                    console.log("err moving");
-                                                    worker.terminate();
-                                                    return false;
-                                                }
-                                                console.log("parent nodes updated");
-                                                KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
-                                                console.log("totalNodes %d", KDJ.BO.totalNodes);
-                                                console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
-                                                if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
-                                                    console.log("pNodes: Reorder completed");
-                                                    //reorderBtn.style.display = "block";
-                                                    //statusTxt.style.display = "none";
-                                                    //localStorage.removeItem('boStatus');
-                                                    worker.terminate();
-                                                }
-                                            });
-                                        } catch (ex) {
-                                            console.log("root node reorder exception: ", ex);
-                                        }
-                                        if (args.hasOwnProperty('isRecursive') && args.isRecursive) {
-                                            for (i = 0; i < sortedNode.length; i++) {
-                                                //console.log("calling sort on children of " + pNodes[i].title);
-                                                worker.postMessage({'action': 'sort', 'type': 'request', 'node': sortedNode, 'args': {'isRecursive': args.isRecursive}});
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    break;
+                        xhr = new XMLHttpRequest();
+                        xhr.onload = function (e) {
+                            if (e.target.status === 200) eval(e.target.responseText);
+                            // worker is present in the sortManager that is evaluated in the above step
+                            worker.postMessage({
+                                'action': 'sort',
+                                'type': 'request',
+                                'node': pNode,
+                                'args': {
+                                    'isRecursive': false
                                 }
-                            }
-                        }, false);
-                        worker.postMessage({'action': 'sort', 'type': 'request', 'node': pNode, 'args': {'isRecursive': false}});
+                            });
+                        }
+                        xhr.open('GET', chrome.extension.getURL('sortManager.js'), true);
+                        xhr.send();
                     }
                 });
             }
         }
-        xhr.open("GET", chrome.extension.getURL('bookmark.js'), true);
+        xhr.open('GET', chrome.extension.getURL('bookmark.js'), true);
         xhr.send();
+    },
+    onReorderComplete: function () {
+        console.log("::Task completed");
     }
 };
 
