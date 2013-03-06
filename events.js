@@ -3,13 +3,32 @@ var totalNodes = 0, nodesProcessed = 0;
 chrome.bookmarks.onMoved.addListener(onBookmarkChange);
 chrome.bookmarks.onCreated.addListener(onBookmarkChange);
 function onBookmarkChange (id, node) {
+    debugger;
+    console.log("===0: %o", node);
+    init(id, node);
+    // var prevNodeStr = localStorage.getItem('changedNodeEvented'),
+    //     prevNode = {};
+    // if (prevNodeStr && prevNodeStr != "") {
+    //     prevNode = JSON.parse(prevNodeStr);
+    //     if (node.oldIndex !== prevNode.oldIndex ||
+    //         node.oldParentId !== prevNode.oldParentId ||
+    //         node.parentId !== prevNode.parentId) {
+    //         init(id, node);
+    //     }
+    // } else {
+    //     localStorage.setItem('changedNodeEvented', JSON.stringify(node));
+    //     init(id, node);
+    // }
+}
+
+function init(id, node) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
         console.log(e);
         if (e.target.status === 200) {
             eval(e.target.responseText);
-            var bm = new Bookmark();
 
+            var bm = new Bookmark();
             bm.getBookmarksSubTree(node.parentId, function (node) {
                 var pNode;
                 console.log("parent node %o", node);

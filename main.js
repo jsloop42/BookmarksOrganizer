@@ -15,31 +15,31 @@ document.addEventListener('DOMContentLoaded', function () {
         reorderBtn.style.display = "block";
         statusTxt.style.display = "none";
     }
-    // new bookmark or on move event handler
-    bm.onBookmarksChange(function (id, bNode) {
-        var parentId;
-        console.log("new bookmark created");
-        console.log(id);
-        console.log(bNode);
-        switch (bNode.event) {
-        case "onCreated":
-            parentId = bNode.parentId;
-            break;
-        case "onMoved":
-            parentId = bNode.parentId;
-            break;
-        }
-        bm.getBookmarksSubTree(bNode.parentId, function (node) {
-            var pNode;
-            console.log("parent node %o", node);
-            if (node.length !== 1) throw new Error("Error in obtained parent node");
-            pNode = node[0];
-            console.log("pNode: %o", pNode);
-            if (pNode.hasOwnProperty('children') && pNode.children.length > 1) {
-                sortByTitle(pNode.children, false);
-            }
-        });
-    });
+    // // new bookmark or on move event handler
+    // bm.onBookmarksChange(function (id, bNode) {
+    //     var parentId;
+    //     console.log("new bookmark created");
+    //     console.log(id);
+    //     console.log(bNode);
+    //     switch (bNode.event) {
+    //     case "onCreated":
+    //         parentId = bNode.parentId;
+    //         break;
+    //     case "onMoved":
+    //         parentId = bNode.parentId;
+    //         break;
+    //     }
+    //     bm.getBookmarksSubTree(bNode.parentId, function (node) {
+    //         var pNode;
+    //         console.log("parent node %o", node);
+    //         if (node.length !== 1) throw new Error("Error in obtained parent node");
+    //         pNode = node[0];
+    //         console.log("pNode: %o", pNode);
+    //         if (pNode.hasOwnProperty('children') && pNode.children.length > 1) {
+    //             sortByTitle(pNode.children, false);
+    //         }
+    //     });
+    // });
 
     // @param {boolean} Recursive sort for the nodes with children. Defaults to false.
     function sortByTitle(nodes, isRecursive) {
