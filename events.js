@@ -6,19 +6,19 @@ function onBookmarkChange (id, node) {
     debugger;
     console.log("===0: %o", node);
     init(id, node);
-    // var prevNodeStr = localStorage.getItem('changedNodeEvented'),
-    //     prevNode = {};
-    // if (prevNodeStr && prevNodeStr != "") {
-    //     prevNode = JSON.parse(prevNodeStr);
-    //     if (node.oldIndex !== prevNode.oldIndex ||
-    //         node.oldParentId !== prevNode.oldParentId ||
-    //         node.parentId !== prevNode.parentId) {
-    //         init(id, node);
-    //     }
-    // } else {
-    //     localStorage.setItem('changedNodeEvented', JSON.stringify(node));
-    //     init(id, node);
-    // }
+    var prevNodeStr = localStorage.getItem('changedNodeEvented'),
+        prevNode = {};
+    if (prevNodeStr && prevNodeStr != "") {
+        prevNode = JSON.parse(prevNodeStr);
+        if (node.oldIndex !== prevNode.oldIndex ||
+            node.oldParentId !== prevNode.oldParentId ||
+            node.parentId !== prevNode.parentId) {
+            init(id, node);
+        }
+    } else {
+        localStorage.setItem('changedNodeEvented', JSON.stringify(node));
+        init(id, node);
+    }
 }
 
 function init(id, node) {
@@ -30,14 +30,15 @@ function init(id, node) {
 
             var bm = new Bookmark();
             bm.getBookmarksSubTree(node.parentId, function (node) {
-                var pNode;
+                var pNode, worker;
                 console.log("parent node %o", node);
                 if (node.length !== 1) throw new Error("Error in obtained parent node");
                 pNode = node[0];
                 console.log("pNode: %o", pNode);
                 if (pNode.hasOwnProperty('children') && pNode.children.length > 1) {
                     //sortByTitle(pNode.children, false);
-                    var worker = new Worker('sortWorker.js');
+                    totalNodes = totalNodes + pNode.children;
+                    worker = new Worker('sortWorker.js');
                     worker.addEventListener('message', function (e) {
                         console.log("worker: ", e.data);
                         if (e.data.hasOwnProperty('action') && e.data.hasOwnProperty('type') && e.data.type === "response") {
@@ -60,6 +61,8 @@ function init(id, node) {
                                             }
                                             console.log("leaf nodes updated");
                                             nodesProcessed = nodesProcessed + 1;
+                                            console.log("totalNodes ", totalNodes);
+                                            console.log("nodesProcessed ", nodesProcessed);
                                             if (nodesProcessed === totalNodes) {
                                                 console.log("pNodes: Reorder completed");
                                                 //reorderBtn.style.display = "block";
@@ -85,6 +88,8 @@ function init(id, node) {
                                             }
                                             console.log("parent nodes updated");
                                             nodesProcessed = nodesProcessed + 1;
+                                            console.log("totalNodes ", totalNodes);
+                                            console.log("nodesProcessed ", nodesProcessed);
                                             if (nodesProcessed === totalNodes) {
                                                 console.log("pNodes: Reorder completed");
                                                 //reorderBtn.style.display = "block";
@@ -108,7 +113,6 @@ function init(id, node) {
                             }
                         }
                     }, false);
-                    worker.postMessage('Hello world');
                     worker.postMessage({'action': 'sort', 'type': 'request', 'node': pNode, 'args': {'isRecursive': false}});
                 }
             });
