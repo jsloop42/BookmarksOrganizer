@@ -2,7 +2,7 @@
 // This file is loaded when bookmark events occur
 // event.js and main.js has no interaction. They are entirely different files with
 // different flows.
-// (c) 2013 kadaj
+// (c) 2013 kadaj. GNU GPL v3.
 
 var KDJ = {};
 

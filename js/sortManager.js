@@ -1,7 +1,7 @@
 // Sort Manager
 // Deals with sort worker
 // Loaded by event.js and main.js
-// (c) 2013 kadaj
+// (c) 2013 kadaj. GNU GPL v3.
 
 worker || (worker = new Worker('js/sortWorker.js'));
 worker.addEventListener('message', function (e) {

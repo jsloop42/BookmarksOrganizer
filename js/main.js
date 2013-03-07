@@ -1,6 +1,6 @@
 // Main
 // This script is loaded when user clicks on the extension's icon
-// (c) 2013 kadaj
+// (c) 2013 kadaj. GNU GPL v3.
 
 var KDJ = {};
 KDJ.BO = {
