@@ -10,13 +10,11 @@ KDJ.BO = {
     statusTxt: [],
     boState: {},
     onReorderComplete: function (e) {
-        console.log("::task completed");
         KDJ.BO.reorderBtn.style.display = "block";
         KDJ.BO.statusTxt.style.display = "none";
         localStorage.removeItem('boStatus');
     },
     onReorderError: function (err) {
-        console.log(err);
         KDJ.BO.reorderBtn.style.display = "none";
         KDJ.BO.statusTxt.style.display = "block";
         localStorage.removeItem('boStatus');
@@ -56,22 +54,20 @@ document.addEventListener('DOMContentLoaded', function () {
         KDJ.BO.reorderBtn.style.display = "none";
         KDJ.BO.statusTxt.innerHTML = "Reorder in progress..";
         KDJ.BO.statusTxt.style.display = "block";
-        console.log("button selected");
+
         var bbNodes = [];
-        console.log("max writes per min: " , bm.getMaxSustainedWritesPerMin());
-        console.log("max writes per hour: ", bm.getMaxWritesPerHour());
+        //console.log("max writes per min: " , bm.getMaxSustainedWritesPerMin());
+        //console.log("max writes per hour: ", bm.getMaxWritesPerHour());
         chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR = 60000;             //read only?
         chrome.bookmarks.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE = 1000;  //read only?
+
         bm.getBookmarksBarNode(onBookmarksObtained);
         bm.getOtherBookmarksNode(onBookmarksObtained);
+
         function onBookmarksObtained (bNodes) {
-            console.log(bNodes);
             if (bNodes.length === 1) bbNodes = bNodes[0];
             else throw new Error("Error getting bookmarks");
-            console.log(bbNodes);
-            //init(bNodes);
             if (bbNodes.hasOwnProperty('children') && bbNodes.children.length > 1) {
-                //sortByTitle(bbNodes.children, true);
                 init(bbNodes);
             }
         }
@@ -79,9 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function init (node) {
         var worker, xhr;
-        console.log(node);
         if (node.hasOwnProperty('children') && node.children.length > 1) {
-            //KDJ.BO.totalNodes = KDJ.BO.totalNodes + node.children.length;
             xhr = new XMLHttpRequest();
             xhr.onload = function (e) {
                 if (e.target.status === 200) eval(e.target.responseText);
@@ -95,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             }
-            xhr.open('GET', chrome.extension.getURL('sortManager.js'), true);
+            xhr.open('GET', chrome.extension.getURL('js/sortManager.js'), true);
             xhr.send();
         }
     }

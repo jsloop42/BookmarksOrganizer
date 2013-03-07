@@ -10,7 +10,6 @@ KDJ.BO = {
     totalNodes: 0,
     nodesProcessed: 0,
     onBookmarkChange: function (id, node) {
-        //KDJ.BO.init(id, node);
         var prevNodeStr = localStorage.getItem('changedNodeEvented'),
             prevNode = {};
         if (prevNodeStr && prevNodeStr != "") {
@@ -28,20 +27,15 @@ KDJ.BO = {
     init: function (id, node) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function (e) {
-            console.log(e);
             if (e.target.status === 200) {
                 eval(e.target.responseText);
 
                 var bm = new Bookmark();
                 bm.getBookmarksSubTree(node.parentId, function (node) {
                     var pNode, worker;
-                    console.log("parent node %o", node);
                     if (node.length !== 1) throw new Error("Error in obtained parent node");
                     pNode = node[0];
-                    console.log("pNode: %o", pNode);
                     if (pNode.hasOwnProperty('children') && pNode.children.length > 1) {
-                        //sortByTitle(pNode.children, false);
-                        //KDJ.BO.totalNodes = KDJ.BO.totalNodes + pNode.children.length;
                         xhr = new XMLHttpRequest();
                         xhr.onload = function (e) {
                             if (e.target.status === 200) eval(e.target.responseText);
@@ -55,18 +49,16 @@ KDJ.BO = {
                                 }
                             });
                         }
-                        xhr.open('GET', chrome.extension.getURL('sortManager.js'), true);
+                        xhr.open('GET', chrome.extension.getURL('js/sortManager.js'), true);
                         xhr.send();
                     }
                 });
             }
         }
-        xhr.open('GET', chrome.extension.getURL('bookmark.js'), true);
+        xhr.open('GET', chrome.extension.getURL('js/bookmark.js'), true);
         xhr.send();
     },
-    onReorderComplete: function () {
-        console.log("::Task completed");
-    }
+    onReorderComplete: function () {}
 };
 
 chrome.bookmarks.onMoved.addListener(KDJ.BO.onBookmarkChange);

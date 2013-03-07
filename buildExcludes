@@ -2,5 +2,9 @@
 .gitignore
 bin
 res/icons/*.fla
+res/icons/bo-512.png
+res/icons/bo-256.png
+res/icons/bo-64.png
+res/icons/bo-32.png
 build.sh
 buildExcludes

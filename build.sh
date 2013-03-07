@@ -1,5 +1,3 @@
-#!bin/bash
-
 # Bookmarks Organizer build script
 
 function clean {

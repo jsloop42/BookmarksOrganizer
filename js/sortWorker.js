@@ -4,7 +4,6 @@
 
 self.addEventListener('message', function (e) {
     var node, shared = {};
-    self.postMessage(e.data);
     if (e.data.hasOwnProperty('action') && e.data.hasOwnProperty('type') && e.data.type === "request") {
         if (e.data.hasOwnProperty('args')) shared.args = e.data.args;
         switch (e.data.action) {
@@ -18,8 +17,6 @@ self.addEventListener('message', function (e) {
     }
 
     function sortByTitle(nodes) {
-        //console.log("sort by title");
-        self.postMessage("sort by title");
         var i = 0,
             args = {},
             leafs = [],             // will contain leaf nodes (no children)
@@ -34,10 +31,9 @@ self.addEventListener('message', function (e) {
             for (i in nodes) {
                 nodeElem = nodes[i];
                 if (nodeElem.hasOwnProperty('children')) {
-                    pNodes.push(nodeElem);
+                    pNodes.push(nodeElem); // root nodes
                 } else {
-                    // sorts leaf
-                    leafs.push(nodeElem);
+                    leafs.push(nodeElem);  // leaf nodes
                 }
             }
             // sort array containing leaf objects
@@ -52,8 +48,7 @@ self.addEventListener('message', function (e) {
             for (i = 0; i < leafs.length; i++) {
                 leafs[i].index = beginIndex;
                 beginIndex = beginIndex + 1;
-            }
-            //console.log("Sorted leafs: %o", leafs);
+            }// leaf nodes are sorted
             args = (shared.hasOwnProperty('args')) ? shared.args : {};
             self.postMessage({'action': 'sort', 'type': 'response', 'result': {'nodeType': 'leaf', 'node': leafs}, 'args': args});
             if (pNodes.length > 0) {
@@ -66,8 +61,7 @@ self.addEventListener('message', function (e) {
                 });
                 for (i = 0; i < pNodes.length; i++) {
                    pNodes[i].index = i;
-                }
-                //console.log("Sorted pNodes: %o", pNodes);
+                }// root nodes are sorted
                 args = (shared.hasOwnProperty('args')) ? shared.args : {};
                 self.postMessage({'action': 'sort', 'type': 'response', 'result': {'nodeType': 'root', 'node': pNodes}, 'args': args});
             }
