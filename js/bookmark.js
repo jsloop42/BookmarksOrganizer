@@ -1,6 +1,6 @@
 // Bookmark
 // model
-// (c) 2013 kadaj
+// (c) 2013 kadaj. GNU GPL v3.
 
 // class
 function Bookmark() {}

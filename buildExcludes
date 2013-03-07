@@ -2,6 +2,7 @@
 .gitignore
 bin
 res/icons/*.fla
+res/icons/Thumbs.db
 res/icons/bo-512.png
 res/icons/bo-256.png
 res/icons/bo-64.png

@@ -1,6 +1,6 @@
 // Sort Worker
 // Web worker which performs the sort operation
-// (c) 2013 kadaj
+// (c) 2013 kadaj. GNU GPL v3.
 
 self.addEventListener('message', function (e) {
     var node, shared = {};

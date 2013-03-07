@@ -40,6 +40,6 @@ Thumbs.db
 
 # Others #
 ##########
-bin
+bin/*
 
 

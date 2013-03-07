@@ -7,7 +7,7 @@ function clean {
 }
 
 function copyFiles {
-    local dest="bin/BookmarksOrganizer"
+    local dest="bin"
     tar -cvf bo.tar * -X buildExcludes
     mkdir -p $dest
     tar -xvf bo.tar -C $dest/
