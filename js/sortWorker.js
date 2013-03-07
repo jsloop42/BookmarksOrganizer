@@ -4,6 +4,7 @@
 
 self.addEventListener('message', function (e) {
     var node, shared = {};
+    self.postMessage(e.data);
     if (e.data.hasOwnProperty('action') && e.data.hasOwnProperty('type') && e.data.type === "request") {
         if (e.data.hasOwnProperty('args')) shared.args = e.data.args;
         switch (e.data.action) {

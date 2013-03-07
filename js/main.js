@@ -9,10 +9,13 @@ KDJ.BO = {
     reorderBtn: [],
     statusTxt: [],
     boState: {},
+    worker: undefined,
     onReorderComplete: function (e) {
         KDJ.BO.reorderBtn.style.display = "block";
         KDJ.BO.statusTxt.style.display = "none";
         localStorage.removeItem('boStatus');
+        //KDJ.BO.worker.terminate();
+        console.log("task completed");
     },
     onReorderError: function (err) {
         KDJ.BO.reorderBtn.style.display = "none";
@@ -28,7 +31,6 @@ KDJ.BO = {
                 break;
             }
         }
-
     }
 };
 
@@ -74,13 +76,31 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function init (node) {
-        var worker, xhr;
+        //console.log(node);
+        var xhr;
         if (node.hasOwnProperty('children') && node.children.length > 1) {
-            xhr = new XMLHttpRequest();
-            xhr.onload = function (e) {
-                if (e.target.status === 200) eval(e.target.responseText);
-                // worker is present in the sortManager that is evaluated in the above step
-                worker.postMessage({
+            if (!KDJ.BO.worker) {
+                //console.log('load manager');
+                xhr = new XMLHttpRequest();
+                xhr.onload = function (e) {
+                    //console.log("manager on loaded");
+                    //console.log(e.target.status);
+                    if (e.target.status === 200) eval(e.target.responseText);
+                    // worker is present in the sortManager that is evaluated in the above step
+                    KDJ.BO.worker.postMessage({
+                        'action': 'sort',
+                        'type': 'request',
+                        'node': node,
+                        'args': {
+                            'isRecursive': true
+                        }
+                    });
+                }
+                xhr.open('GET', chrome.extension.getURL('js/sortManager.js'), true);
+                xhr.send();
+            } else {
+                //console.log('manager already loaded');
+                KDJ.BO.worker.postMessage({
                     'action': 'sort',
                     'type': 'request',
                     'node': node,
@@ -89,8 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             }
-            xhr.open('GET', chrome.extension.getURL('js/sortManager.js'), true);
-            xhr.send();
         }
     }
 });

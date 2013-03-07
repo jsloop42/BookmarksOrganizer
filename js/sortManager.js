@@ -3,8 +3,8 @@
 // Loaded by event.js and main.js
 // (c) 2013 kadaj. GNU GPL v3.
 
-worker || (worker = new Worker('js/sortWorker.js'));
-worker.addEventListener('message', function (e) {
+KDJ.BO.worker || (KDJ.BO.worker = new Worker('js/sortWorker.js'));
+KDJ.BO.worker.addEventListener('message', function (e) {
     if (e.data.hasOwnProperty('action') && e.data.hasOwnProperty('type') && e.data.type === "response") {
         switch (e.data.action) {
         case "sort":
@@ -21,8 +21,8 @@ worker.addEventListener('message', function (e) {
                         if (!res) {
                             // TODO: update status text
                             localStorage.removeItem('boStatus');
-                            //console.log("err moving");
-                            worker.terminate();
+                            console.log("err moving");
+                            //KDJ.BO.worker.terminate();
                             if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                 KDJ.BO.onReorderError({
                                     'status': false,
@@ -33,9 +33,12 @@ worker.addEventListener('message', function (e) {
                             return false;
                         }
                         KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
+                        //console.log("totalNodes %d", KDJ.BO.totalNodes);
+                        //console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
+                        //console.log("leaf updated");
                         if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                             // leaf nodes reorder completed
-                            worker.terminate();
+                            //KDJ.BO.worker.terminate();
                             if (KDJ.BO.hasOwnProperty('onReorderComplete') && typeof KDJ.BO.onReorderComplete === "function") {
                                 KDJ.BO.onReorderComplete();
                             }
@@ -59,7 +62,7 @@ worker.addEventListener('message', function (e) {
                             // TODO: update status text
                             localStorage.removeItem('boStatus');
                             //console.log("err moving");
-                            worker.terminate();
+                            //KDJ.BO.worker.terminate();
                             if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                 KDJ.BO.onReorderError({
                                     'status': false,
@@ -69,12 +72,14 @@ worker.addEventListener('message', function (e) {
                             }
                             return false;
                         }
+
                         KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
                         //console.log("totalNodes %d", KDJ.BO.totalNodes);
                         //console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
+                        //console.log("root updated")
                         if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                             // root nodes reorder completed
-                            worker.terminate();
+                            //KDJ.BO.worker.terminate();
                             if (KDJ.BO.hasOwnProperty('onReorderComplete') && typeof KDJ.BO.onReorderComplete === "function") {
                                 KDJ.BO.onReorderComplete();
                             }
@@ -93,7 +98,7 @@ worker.addEventListener('message', function (e) {
                 if (args.hasOwnProperty('isRecursive') && args.isRecursive) {
                     for (i = 0; i < sortedNode.length; i++) {
                         //console.log("calling sort on children of " + sortedNode[i].title);
-                        worker.postMessage({'action': 'sort', 'type': 'request', 'node': sortedNode[i], 'args': {'isRecursive': args.isRecursive}});
+                        KDJ.BO.worker.postMessage({'action': 'sort', 'type': 'request', 'node': sortedNode[i], 'args': {'isRecursive': args.isRecursive}});
                     }
                 }
                 break;
