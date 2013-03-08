@@ -73,7 +73,7 @@ Bookmark.prototype = (function () {
         // calls the given callback function on new bookmarks
         // @param {function} callback
         onBookmarksChange: function (callback) {
-            if (typeof callback !== "function") throw new Error('callback function is required')
+            if (typeof callback !== "function") throw new Error('callback function is required');
             chrome.bookmarks.onCreated.addListener(function (id, res) {
                 res.event = "onCreated";
                 callback(id, res);
