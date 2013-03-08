@@ -52,11 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // reorder click event listener
     KDJ.BO.reorderBtn.addEventListener('click', function (e) {
-        localStorage.setItem('boStatus', 'in_progress');
-        KDJ.BO.reorderBtn.style.display = "none";
-        KDJ.BO.statusTxt.innerHTML = "Reorder in progress..";
-        KDJ.BO.statusTxt.style.display = "block";
-
         var bbNodes = [];
         //console.log("max writes per min: " , bm.getMaxSustainedWritesPerMin());
         //console.log("max writes per hour: ", bm.getMaxWritesPerHour());
@@ -67,16 +62,23 @@ document.addEventListener('DOMContentLoaded', function () {
         bm.getOtherBookmarksNode(onBookmarksObtained);
 
         function onBookmarksObtained (bNodes) {
+            debugger;
+            console.log(bNodes);
             if (bNodes.length === 1) bbNodes = bNodes[0];
             else throw new Error("Error getting bookmarks");
+            console.log(bNodes);
             if (bbNodes.hasOwnProperty('children') && bbNodes.children.length > 1) {
+                localStorage.setItem('boStatus', 'in_progress');
+                KDJ.BO.reorderBtn.style.display = "none";
+                KDJ.BO.statusTxt.innerHTML = "Reorder in progress..";
+                KDJ.BO.statusTxt.style.display = "block";
                 init(bbNodes);
             }
         }
     });
 
     function init (node) {
-        //console.log(node);
+        console.log(node);
         var xhr;
         if (node.hasOwnProperty('children') && node.children.length > 1) {
             if (!KDJ.BO.worker) {
