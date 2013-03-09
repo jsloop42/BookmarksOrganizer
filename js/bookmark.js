@@ -43,18 +43,19 @@ Bookmark.prototype = (function () {
         // @param {function} callback
         getOtherBookmarksNode: function (callback) {
             if (typeof callback !== "function") throw new Error("callback parameter is required");
-            chrome.bookmarks.getSubTree(this.getOtherBookmarksId(), callback);
+            this.getBookmarksSubTree(this.getOtherBookmarksId(), callback);
         },
         // @param {array} nodes
         moveBookmarks: function (nodes, callback) {
             var i, nodeElem;
+            if (typeof callback !== "function") throw new Error("callback parameter is required");
             for (i in nodes) {
                 nodeElem = nodes[i];
                 chrome.bookmarks.move(nodeElem.id, {
                     'parentId': nodeElem.parentId,
                     'index': nodeElem.index
                 }, function (res) {
-                    if (typeof callback === "function") callback(res);
+                    callback(res);
                 });
             }
         },

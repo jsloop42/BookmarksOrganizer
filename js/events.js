@@ -29,7 +29,7 @@ KDJ.BO = {
         var xhr = new XMLHttpRequest();
         xhr.onload = function (e) {
             if (e.target.status === 200) {
-                eval(e.target.responseText);
+                eval(e.target.responseText);    //No access to browser DOM. So have to spawn a JS interpreter.
 
                 var bm = new Bookmark();
                 bm.getBookmarksSubTree(node.parentId, function (node) {
