@@ -1,9 +1,7 @@
 # Bookmarks Organizer build script
 
 function clean {
-    ls bin
     rm -rf bin/*
-    ls bin
 }
 
 function copyFiles {
