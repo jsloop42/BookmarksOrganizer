@@ -15,7 +15,7 @@ KDJ.BO = {
         KDJ.BO.statusTxt.style.display = "none";
         localStorage.removeItem('boStatus');
         //KDJ.BO.worker.terminate();
-        console.log("task completed");
+        //console.log("task completed");
     },
     onReorderError: function (err) {
         KDJ.BO.reorderBtn.style.display = "none";
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadWorker (callback) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function (e) {
-            console.log("manager on loaded");
+            //console.log("manager on loaded");
             //console.log(e.target.status);
             if (e.target.status === 200) eval(e.target.responseText);
             // worker is present in the sortManager that is evaluated in the above step
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sortBookmarks(node);
                 });
             } else {
-                console.log('manager already loaded');
+                //console.log('manager already loaded');
                 sortBookmarks(node);
             }
         }

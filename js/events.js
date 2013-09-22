@@ -12,17 +12,16 @@ KDJ.BO = {
     isImportBegan: false,
     isImportEnded: true,
     onImportBegan: function () {
-        console.log("import began");
+        //console.log("import began");
         KDJ.BO.isImportBegan = true;
         KDJ.BO.isImportEnded = false;
     },
     onImportEnded: function () {
-        console.log("import ended");
+        //console.log("import ended");
         KDJ.BO.isImportBegan = false;
         KDJ.BO.isImportEnded = true;
     },
     onBookmarkChange: function (id, node) {
-        console.log("change 0");
         var prevNodeStr, prevNode = {};
         KDJ.BO.totalNodes = 0;
         if (!KDJ.BO.isImportBegan && KDJ.BO.isImportEnded) {  // avoid processing bookmarks if import is in progress
@@ -64,7 +63,7 @@ KDJ.BO = {
         xhr.send();
     },
     onReorderComplete: function () {
-        console.log("task completed");
+        //console.log("task completed");
     }
 };
 

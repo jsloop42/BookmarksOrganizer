@@ -30,7 +30,7 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                             bm.moveBookmark(node, function (res) {
                                 if (!res) {
                                     localStorage.removeItem('boStatus');
-                                    console.log("err moving");
+                                    //console.log("err moving");
                                     //KDJ.BO.worker.terminate();
                                     if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                         KDJ.BO.onReorderError({
@@ -99,8 +99,8 @@ KDJ.BO.worker.addEventListener('message', function (e) {
 
                                 KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
                                 //console.log("totalNodes %d", KDJ.BO.totalNodes);
-                                console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
-                                console.log("root updated")
+                                //console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
+                                //console.log("root updated")
                                 if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                                     // root nodes reorder completed
                                     //KDJ.BO.worker.terminate();
