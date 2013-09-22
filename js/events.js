@@ -1,7 +1,6 @@
 // Events
 // This file is loaded when bookmark events occur
-// event.js and main.js has no interaction. They are entirely different files with
-// different flows.
+// event.js and main.js does not interact with each other. They are entirely different files with different flows.
 // (c) 2013 kadaj. GNU GPL v3.
 
 var KDJ = {};
@@ -10,18 +9,23 @@ KDJ.BO = {
     totalNodes: 0,
     nodesProcessed: 0,
     worker: undefined,
+    isImportBegan: false,
+    isImportEnded: true,
+    onImportBegan: function () {
+        console.log("import began");
+        KDJ.BO.isImportBegan = true;
+        KDJ.BO.isImportEnded = false;
+    },
+    onImportEnded: function () {
+        console.log("import ended");
+        KDJ.BO.isImportBegan = false;
+        KDJ.BO.isImportEnded = true;
+    },
     onBookmarkChange: function (id, node) {
-        var prevNodeStr = localStorage.getItem('changedNodeEvented'),
-            prevNode = {};
-        if (prevNodeStr && prevNodeStr != "") {
-            prevNode = JSON.parse(prevNodeStr);
-            if (node.oldIndex !== prevNode.oldIndex ||
-                node.oldParentId !== prevNode.oldParentId ||
-                node.parentId !== prevNode.parentId) {
-                KDJ.BO.init(id, node);
-            }
-        } else {
-            localStorage.setItem('changedNodeEvented', JSON.stringify(node));
+        console.log("change 0");
+        var prevNodeStr, prevNode = {};
+        KDJ.BO.totalNodes = 0;
+        if (!KDJ.BO.isImportBegan && KDJ.BO.isImportEnded) {  // avoid processing bookmarks if import is in progress
             KDJ.BO.init(id, node);
         }
     },
@@ -64,5 +68,7 @@ KDJ.BO = {
     }
 };
 
+chrome.bookmarks.onImportBegan.addListener(KDJ.BO.onBookmarkImportBegan);
+chrome.bookmarks.onImportEnded.addListener(KDJ.BO.onBookmarkImportEnded);
 chrome.bookmarks.onMoved.addListener(KDJ.BO.onBookmarkChange);
 chrome.bookmarks.onCreated.addListener(KDJ.BO.onBookmarkChange);

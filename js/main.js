@@ -24,13 +24,14 @@ KDJ.BO = {
         if (err && err.hasOwnProperty('errCode')) {
             switch (err.errCode) {
             case 1:
-                KDJ.BO.statusTxt.innerHTML = "Maximum write operations for the API exceeded. Try later.";
+                KDJ.BO.statusTxt.innerHTML = "Chrome browser API call limit exceeded by the extension. Try later.";
                 break;
             case 2:
                 KDJ.BO.statusTxt.innerHTML = "Error reordering";
                 break;
             }
         }
+        return false; // on error stop reordering the rest because most likely, the limit exceeded.
     }
 };
 
@@ -55,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var bbNodes = [];
         //console.log("max writes per min: " , bm.getMaxSustainedWritesPerMin());
         //console.log("max writes per hour: ", bm.getMaxWritesPerHour());
-        chrome.bookmarks.MAX_WRITE_OPERATIONS_PER_HOUR = 60000;             //read only?
-        chrome.bookmarks.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE = 1000;  //read only?
 
         bm.getBookmarksBarNode(onBookmarksObtained);
         bm.getOtherBookmarksNode(onBookmarksObtained);
@@ -75,38 +74,40 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    function loadWorker (callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function (e) {
+            console.log("manager on loaded");
+            //console.log(e.target.status);
+            if (e.target.status === 200) eval(e.target.responseText);
+            // worker is present in the sortManager that is evaluated in the above step
+            if (typeof callback === "function") callback();
+        }
+        xhr.open('GET', chrome.extension.getURL('js/sortManager.js'), true);
+        xhr.send();
+    }
+
+    function sortBookmarks (node) {
+        KDJ.BO.totalNodes = 0;
+        KDJ.BO.worker.postMessage({
+            'action': 'sort',
+            'type': 'request',
+            'node': node,
+            'args': {
+                'isRecursive': true
+            }
+        });
+    }
+
     function init (node) {
-        var xhr;
         if (node.hasOwnProperty('children') && node.children.length > 1) {
             if (!KDJ.BO.worker) {
-                //console.log('load manager');
-                xhr = new XMLHttpRequest();
-                xhr.onload = function (e) {
-                    //console.log("manager on loaded");
-                    //console.log(e.target.status);
-                    if (e.target.status === 200) eval(e.target.responseText);
-                    // worker is present in the sortManager that is evaluated in the above step
-                    KDJ.BO.worker.postMessage({
-                        'action': 'sort',
-                        'type': 'request',
-                        'node': node,
-                        'args': {
-                            'isRecursive': true
-                        }
-                    });
-                }
-                xhr.open('GET', chrome.extension.getURL('js/sortManager.js'), true);
-                xhr.send();
-            } else {
-                //console.log('manager already loaded');
-                KDJ.BO.worker.postMessage({
-                    'action': 'sort',
-                    'type': 'request',
-                    'node': node,
-                    'args': {
-                        'isRecursive': true
-                    }
+                loadWorker(function () {
+                    sortBookmarks(node);
                 });
+            } else {
+                console.log('manager already loaded');
+                sortBookmarks(node);
             }
         }
     }

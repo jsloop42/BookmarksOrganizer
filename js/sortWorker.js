@@ -47,8 +47,14 @@ self.addEventListener('message', function (e) {
             });
             beginIndex = len - leafs.length;
             for (i = 0; i < leafs.length; i++) {
-                leafs[i].index = beginIndex;
-                beginIndex = beginIndex + 1;
+                if (leafs[i].index == beginIndex) {  // check so that only leaf nodes that changed gets updated.
+                    leafs[i].isChanged = false;
+                    beginIndex = beginIndex + 1;
+                } else {
+                    leafs[i].index = beginIndex;
+                    leafs[i].isChanged = true;
+                    beginIndex = beginIndex + 1;
+                }
             }// leaf nodes are sorted
             args = (shared.hasOwnProperty('args')) ? shared.args : {};
             self.postMessage({'action': 'sort', 'type': 'response', 'result': {'nodeType': 'leaf', 'node': leafs}, 'args': args});
@@ -60,8 +66,14 @@ self.addEventListener('message', function (e) {
                     bTitle = b.title.toLowerCase();
                     return aTitle < bTitle ? -1 : aTitle > bTitle ? 1 : 0;
                 });
+                console.log("pNodes: " + pNodes);
                 for (i = 0; i < pNodes.length; i++) {
-                   pNodes[i].index = i;
+                    if (pNodes[i].index == i) {  // check to update only the ones that changed its position
+                        pNodes[i].isChanged = false;
+                    } else {                        
+                        pNodes[i].index = i;
+                        pNodes[i].isChanged = true;
+                    }
                 }// root nodes are sorted
                 args = (shared.hasOwnProperty('args')) ? shared.args : {};
                 self.postMessage({'action': 'sort', 'type': 'response', 'result': {'nodeType': 'root', 'node': pNodes}, 'args': args});
