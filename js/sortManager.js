@@ -43,8 +43,8 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                                 }
                                 KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
                                 //console.log("totalNodes %d", KDJ.BO.totalNodes);
-                                console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
-                                console.log("leaf updated");
+                                //console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
+                                //console.log("leaf updated");
                                 if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                                     // leaf nodes reorder completed
                                     //KDJ.BO.worker.terminate();

@@ -66,7 +66,7 @@ self.addEventListener('message', function (e) {
                     bTitle = b.title.toLowerCase();
                     return aTitle < bTitle ? -1 : aTitle > bTitle ? 1 : 0;
                 });
-                console.log("pNodes: " + pNodes);
+                //console.log("pNodes: " + pNodes);
                 for (i = 0; i < pNodes.length; i++) {
                     if (pNodes[i].index == i) {  // check to update only the ones that changed its position
                         pNodes[i].isChanged = false;
