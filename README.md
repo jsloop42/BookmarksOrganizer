@@ -9,6 +9,10 @@ Bookmarks Organizer helps in keeping the bookmarks sorted. It monitors for newly
 
 2. Also when you launch the browser, if bookmarks syncing is enabled, then the extension will use resources depending on the number of bookmarks changed. If this is making your system slow, you can disable the extension and re-enable it once the sync is completed.
 
+#### Install
+
+[<img src='https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png'>](https://chrome.google.com/webstore/detail/bookmarks-organizer/cjdenbocfdbjohomdaojaokiffjbnaca)
+
 #### Change Logs
 
 ##### Version 2.0.3
