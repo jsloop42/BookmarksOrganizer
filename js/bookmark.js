@@ -1,5 +1,5 @@
 // Bookmark model. Interfaces with chrome bookmarks API.
-// (c) 2013 kadaj. GNU GPL v3.
+// (c) 2013 qlambda.com. GNU GPL v3.
 
 function Bookmark() {}
 

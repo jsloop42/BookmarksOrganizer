@@ -1,7 +1,7 @@
 // Sort Manager
 // Loads and communicates with sort worker
 // Loaded by event.js and main.js
-// (c) 2013 kadaj. GNU GPL v3.
+// (c) 2013 qlambda.com. GNU GPL v3.
 
 KDJ.BO.worker || (KDJ.BO.worker = new Worker('js/sortWorker.js'));
 KDJ.BO.worker.addEventListener('message', function (e) {

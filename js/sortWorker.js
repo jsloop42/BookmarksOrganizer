@@ -1,6 +1,6 @@
 // Sort Worker
 // Web worker which performs the sort operation
-// (c) 2013 kadaj. GNU GPL v3.
+// (c) 2013 qlambda.com. GNU GPL v3.
 
 self.addEventListener('message', function (e) {
     var node, shared = {};
