@@ -1,12 +1,12 @@
 {
     "name": "Bookmarks Organizer",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "manifest_version": 2,
     "author": "qlambda.com",
     "description": "Organize Bookmarks",
     "permissions": ["bookmarks"],
     "background": {
-        "scripts": ["js/events.js"],
+        "scripts": ["js/bookmark.js", "js/events.js", "js/sortManager.js"],
         "persistent": false
       },
     "browser_action": {
@@ -19,5 +19,6 @@
         "48": "res/icons/bo-48.png",
         "128": "res/icons/bo-128.png"
     },
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "offline_enabled": true
 }

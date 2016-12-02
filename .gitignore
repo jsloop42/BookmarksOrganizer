@@ -41,5 +41,5 @@ Thumbs.db
 # Others #
 ##########
 bin/*
-
+tests/*
 

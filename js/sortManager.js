@@ -1,10 +1,13 @@
 // Sort Manager
 // Loads and communicates with sort worker
 // Loaded by event.js and main.js
-// (c) 2013 qlambda.com. GNU GPL v3.
+// (c) 2013 Jaseem V V. GNU GPL v3.
 
-KDJ.BO.worker || (KDJ.BO.worker = new Worker('js/sortWorker.js'));
-KDJ.BO.worker.addEventListener('message', function (e) {
+var KDJ = KDJ || {};
+KDJ.BO = KDJ.BO || {};
+debugger;
+KDJ.BO.worker = new Worker('js/sortWorker.js');
+KDJ.BO.worker.onMessageHandler = function (e) {
     if (e.data.hasOwnProperty('action') && e.data.hasOwnProperty('type') && e.data.type === "response") {
         switch (e.data.action) {
         case "sort":
@@ -19,18 +22,18 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                 len = sortedNode.length,
                 node;
             KDJ.BO.totalNodes = KDJ.BO.totalNodes + len;
-            //console.log("totalNodes sorted: " + len);
+            KDJ.BO.log("[sortManager] totalNodes sorted: " + len);
             switch (result.nodeType) {
             case "leaf":
                 for (i = 0; i < len; i++) {
                     node = sortedNode[i];
                     if (node.isChanged == true) {  // node changed
-                        delete node.isChanged;
+                        node.isChanged = false;
                         try {
-                            bm.moveBookmark(node, function (res) {
+                            KDJ.BO.bm.moveBookmark(node, function (res) {
                                 if (!res) {
                                     localStorage.removeItem('boStatus');
-                                    //console.log("err moving");
+                                    KDJ.BO.log("[sortManager] err moving leaf node");
                                     //KDJ.BO.worker.terminate();
                                     if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                         KDJ.BO.onReorderError({
@@ -42,9 +45,9 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                                     return false;
                                 }
                                 KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
-                                //console.log("totalNodes %d", KDJ.BO.totalNodes);
-                                //console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
-                                //console.log("leaf updated");
+                                KDJ.BO.log("[sortManager] leaf totalNodes %d", KDJ.BO.totalNodes);
+                                KDJ.BO.log("[sortManager] leaf nodesProcessed %d", KDJ.BO.nodesProcessed);
+                                KDJ.BO.log("[sortManager] leaf updated");
                                 if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                                     // leaf nodes reorder completed
                                     //KDJ.BO.worker.terminate();
@@ -54,7 +57,7 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                                 }
                             });
                         } catch (ex) {
-                            //console.log("leaf node reorder exception: ", ex);
+                            KDJ.BO.log("[sortManager] leaf node reorder exception: ", ex);
                             if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                 KDJ.BO.onReorderError({
                                     'status': false,
@@ -80,12 +83,12 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                 for (j = 0; j < len; j++) {
                     node = sortedNode[j];
                     if (node.isChanged == true) {                        
-                        delete node.isChanged;
+                        node.isChanged = false;
                         try {
-                            bm.moveBookmark(node, function (res, a) {
+                            KDJ.BO.bm.moveBookmark(node, function (res, a) {
                                 if (!res) {
                                     localStorage.removeItem('boStatus');
-                                    //console.log("err moving");
+                                    KDJ.BO.log("[sortManager] err moving root node");
                                     //KDJ.BO.worker.terminate();
                                     if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                         KDJ.BO.onReorderError({
@@ -98,9 +101,9 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                                 }
 
                                 KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
-                                //console.log("totalNodes %d", KDJ.BO.totalNodes);
-                                //console.log("nodesProcessed %d", KDJ.BO.nodesProcessed);
-                                //console.log("root updated")
+                                KDJ.BO.log("[sortManager] root totalNodes %d", KDJ.BO.totalNodes);
+                                KDJ.BO.log("[sortManager] root nodesProcessed %d", KDJ.BO.nodesProcessed);
+                                KDJ.BO.log("[sortManager] root updated")
                                 if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                                     // root nodes reorder completed
                                     //KDJ.BO.worker.terminate();
@@ -110,7 +113,7 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                                 }
                             });
                         } catch (ex) {
-                            //console.log("root node reorder exception: ", ex);
+                            KDJ.BO.log("[sortManager] root node reorder exception: ", ex);
                             if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                 KDJ.BO.onReorderError({
                                     'status': false,
@@ -134,7 +137,7 @@ KDJ.BO.worker.addEventListener('message', function (e) {
                 
                 if (args.hasOwnProperty('isRecursive') && args.isRecursive) {
                     for (k = 0; k < len; k++) {
-                        //console.log("calling sort on children of " + sortedNode[i].title);
+                        KDJ.BO.log("[sortManager] calling sort on children of " + sortedNode[i].title);
                         KDJ.BO.worker.postMessage({'action': 'sort', 'type': 'request', 'node': sortedNode[k], 'args': {'isRecursive': args.isRecursive}});
                     }
                 }
@@ -143,4 +146,5 @@ KDJ.BO.worker.addEventListener('message', function (e) {
             break;
         }
     }
-}, false);
+};
+KDJ.BO.worker.addEventListener('message', KDJ.BO.worker.onMessageHandler, false);

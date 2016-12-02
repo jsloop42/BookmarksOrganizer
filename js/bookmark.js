@@ -1,13 +1,13 @@
 // Bookmark model. Interfaces with chrome bookmarks API.
-// (c) 2013 qlambda.com. GNU GPL v3.
+// (c) 2013 Jaseem V V. GNU GPL v3.
 
 function Bookmark() {}
 
 Bookmark.prototype = (function () {
-    // private
+    // @private
     var BOOKMARKS_BAR_ID = "1",
         OTHER_BOOKMARKS_ID = "2";
-    // public
+    // @public
     return {
         // Retrieves all bookmarks
         // @param {function} callback

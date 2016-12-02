@@ -1,14 +1,18 @@
 // Main
-// This script is loaded when user clicks on the extension's icon
-// (c) 2013 qlambda.com. GNU GPL v3.
+// This script is loaded when user clicks on the extension's icon.
+// (c) 2013 Jaseem V V. GNU GPL v3.
 
 var KDJ = {};
 KDJ.BO = {
+    debug: true,
     totalNodes: 0,
     nodesProcessed: 0,
     reorderBtn: [],
     statusTxt: [],
     boState: {},
+    log: function (...args) {
+        if (this.debug) console.log.apply(null, args);
+    },
     worker: undefined,
     onReorderComplete: function (e) {
         KDJ.BO.reorderBtn.style.display = "block";

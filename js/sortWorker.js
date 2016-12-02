@@ -1,6 +1,6 @@
 // Sort Worker
 // Web worker which performs the sort operation
-// (c) 2013 qlambda.com. GNU GPL v3.
+// (c) 2013 Jaseem V V. GNU GPL v3.
 
 self.addEventListener('message', function (e) {
     var node, shared = {};
@@ -66,7 +66,6 @@ self.addEventListener('message', function (e) {
                     bTitle = b.title.toLowerCase();
                     return aTitle < bTitle ? -1 : aTitle > bTitle ? 1 : 0;
                 });
-                //console.log("pNodes: " + pNodes);
                 for (i = 0; i < pNodes.length; i++) {
                     if (pNodes[i].index == i) {  // check to update only the ones that changed its position
                         pNodes[i].isChanged = false;
