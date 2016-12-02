@@ -15,7 +15,7 @@ Bookmarks Organizer helps in keeping the bookmarks sorted. It monitors for newly
 
 #### Change Logs
 
-##### Version 2.0.4
+##### Version 2.0.5
 
 * Memory optimization: removed script loading via xhr and eval which reduces the bookmark object to just one.
 * Removed content security policy which reverts it to default.

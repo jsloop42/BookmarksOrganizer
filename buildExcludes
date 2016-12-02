@@ -10,3 +10,4 @@ res/icons/bo-32.png
 build.sh
 buildExcludes
 publishScreenshot
+tests
