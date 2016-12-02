@@ -4,22 +4,32 @@
 
 var KDJ = {};
 KDJ.BO = {
-    debug: true,
+    debug: false,
     totalNodes: 0,
     nodesProcessed: 0,
     reorderBtn: [],
     statusTxt: [],
     boState: {},
+    bm: new Bookmark(),
     log: function (...args) {
         if (this.debug) console.log.apply(null, args);
     },
-    worker: undefined,
     onReorderComplete: function (e) {
+        var c;
         KDJ.BO.reorderBtn.style.display = "block";
         KDJ.BO.statusTxt.style.display = "none";
         localStorage.removeItem('boStatus');
+        if (KDJ.BO.debug) {
+            c = localStorage.getItem('n_onreordercomplete_main_js');
+            if (c == null || c == "") {
+                c = 0;
+            } else {
+                c = parseInt(c, 10) + 1;
+            }
+            localStorage.setItem('n_onreordercomplete_main_js', c);
+        }
         //KDJ.BO.worker.terminate();
-        //console.log("task completed");
+        KDJ.BO.log("task completed");
     },
     onReorderError: function (err) {
         KDJ.BO.reorderBtn.style.display = "none";
@@ -40,7 +50,6 @@ KDJ.BO = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    var bm = new Bookmark();
     KDJ.BO.reorderBtn = document.querySelector('.reorderBtn');
     KDJ.BO.statusTxt = document.querySelector('.statusTxt');
 
@@ -58,14 +67,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // reorder click event listener
     KDJ.BO.reorderBtn.addEventListener('click', function (e) {
         var bbNodes = [];
-        //console.log("max writes per min: " , bm.getMaxSustainedWritesPerMin());
-        //console.log("max writes per hour: ", bm.getMaxWritesPerHour());
 
-        bm.getBookmarksBarNode(onBookmarksObtained);
-        bm.getOtherBookmarksNode(onBookmarksObtained);
+        KDJ.BO.bm.getBookmarksBarNode(onBookmarksObtained);
+        KDJ.BO.bm.getOtherBookmarksNode(onBookmarksObtained);
 
         function onBookmarksObtained (bNodes) {
-            //console.log(bNodes);
             if (bNodes.length === 1) bbNodes = bNodes[0];
             else throw new Error("Error getting bookmarks");
             if (bbNodes.hasOwnProperty('children') && bbNodes.children.length > 1) {
@@ -73,23 +79,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 KDJ.BO.reorderBtn.style.display = "none";
                 KDJ.BO.statusTxt.innerHTML = "Reorder in progress..";
                 KDJ.BO.statusTxt.style.display = "block";
-                init(bbNodes);
+                sortBookmarks(bbNodes);
             }
         }
     });
-
-    function loadWorker (callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.onload = function (e) {
-            //console.log("manager on loaded");
-            //console.log(e.target.status);
-            if (e.target.status === 200) eval(e.target.responseText);
-            // worker is present in the sortManager that is evaluated in the above step
-            if (typeof callback === "function") callback();
-        }
-        xhr.open('GET', chrome.extension.getURL('js/sortManager.js'), true);
-        xhr.send();
-    }
 
     function sortBookmarks (node) {
         KDJ.BO.totalNodes = 0;
@@ -101,18 +94,5 @@ document.addEventListener('DOMContentLoaded', function () {
                 'isRecursive': true
             }
         });
-    }
-
-    function init (node) {
-        if (node.hasOwnProperty('children') && node.children.length > 1) {
-            if (!KDJ.BO.worker) {
-                loadWorker(function () {
-                    sortBookmarks(node);
-                });
-            } else {
-                //console.log('manager already loaded');
-                sortBookmarks(node);
-            }
-        }
     }
 });

@@ -17,33 +17,32 @@ KDJ.BO = {
         if (this.debug) console.log.apply(null, args);
     },
     onImportBegan: function () {
-        //console.log("import began");
         KDJ.BO.isImportBegan = true;
         KDJ.BO.isImportEnded = false;
     },
     onImportEnded: function () {
-        //console.log("import ended");
         KDJ.BO.isImportBegan = false;
         KDJ.BO.isImportEnded = true;
     },
     onBookmarkChange: function (id, node) {
-        var prevNodeStr, prevNode = {};
+        var prevNodeStr, prevNode = {}, boStatus = localStorage.getItem('boStatus');
         KDJ.BO.totalNodes = 0;
-        if (!KDJ.BO.isImportBegan && KDJ.BO.isImportEnded) {  // avoid processing bookmarks if import is in progress
+        // Avoid processing bookmarks if import is in progress. Also avoid processing if reorder is triggered from the UI.
+        if ((!KDJ.BO.isImportBegan && KDJ.BO.isImportEnded) || (boStatus == null || boStatus == "")) {
             KDJ.BO.init(id, node);
         }
     },
     init: function (id, node) {
         var c = 0;
         if (KDJ.BO.debug) {
-            c = localStorage.getItem('nInitCalls_event_js');
+            c = localStorage.getItem('n_init_event_js');
             if (c == null || c == "") {
                 c = 0;
             } else {
                 c = parseInt(c, 10) + 1;
             }
-        }
-        localStorage.setItem('nInitCalls_event_js', c);
+            localStorage.setItem('n_init_event_js', c);
+        }        
         KDJ.BO.bm.getBookmarksSubTree(node.parentId, function (node) {
             var pNode;
             if (node.length !== 1) throw new Error("Error in obtained parent node");

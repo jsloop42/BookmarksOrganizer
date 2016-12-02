@@ -5,7 +5,7 @@
 
 var KDJ = KDJ || {};
 KDJ.BO = KDJ.BO || {};
-debugger;
+
 KDJ.BO.worker = new Worker('js/sortWorker.js');
 KDJ.BO.worker.onMessageHandler = function (e) {
     if (e.data.hasOwnProperty('action') && e.data.hasOwnProperty('type') && e.data.type === "response") {
@@ -28,13 +28,13 @@ KDJ.BO.worker.onMessageHandler = function (e) {
                 for (i = 0; i < len; i++) {
                     node = sortedNode[i];
                     if (node.isChanged == true) {  // node changed
-                        node.isChanged = false;
+                        delete node.isChanged;  // deleting the prop because the node that chrome api expects does not have this property.
                         try {
+                            KDJ.BO.log("[sortManager] leaf nodes %o", node);
                             KDJ.BO.bm.moveBookmark(node, function (res) {
                                 if (!res) {
                                     localStorage.removeItem('boStatus');
                                     KDJ.BO.log("[sortManager] err moving leaf node");
-                                    //KDJ.BO.worker.terminate();
                                     if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                         KDJ.BO.onReorderError({
                                             'status': false,
@@ -50,7 +50,6 @@ KDJ.BO.worker.onMessageHandler = function (e) {
                                 KDJ.BO.log("[sortManager] leaf updated");
                                 if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                                     // leaf nodes reorder completed
-                                    //KDJ.BO.worker.terminate();
                                     if (KDJ.BO.hasOwnProperty('onReorderComplete') && typeof KDJ.BO.onReorderComplete === "function") {
                                         KDJ.BO.onReorderComplete();
                                     }
@@ -71,7 +70,6 @@ KDJ.BO.worker.onMessageHandler = function (e) {
                         KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
                         if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                             // leaf nodes reorder completed
-                            //KDJ.BO.worker.terminate();
                             if (KDJ.BO.hasOwnProperty('onReorderComplete') && typeof KDJ.BO.onReorderComplete === "function") {
                                 KDJ.BO.onReorderComplete();
                             }
@@ -83,13 +81,13 @@ KDJ.BO.worker.onMessageHandler = function (e) {
                 for (j = 0; j < len; j++) {
                     node = sortedNode[j];
                     if (node.isChanged == true) {                        
-                        node.isChanged = false;
+                        delete node.isChanged;
                         try {
+                            KDJ.BO.log("[sortManager] root nodes %o", node);
                             KDJ.BO.bm.moveBookmark(node, function (res, a) {
                                 if (!res) {
                                     localStorage.removeItem('boStatus');
                                     KDJ.BO.log("[sortManager] err moving root node");
-                                    //KDJ.BO.worker.terminate();
                                     if (KDJ.BO.hasOwnProperty('onReorderError') && typeof KDJ.BO.onReorderError === "function") {
                                         KDJ.BO.onReorderError({
                                             'status': false,
@@ -106,7 +104,6 @@ KDJ.BO.worker.onMessageHandler = function (e) {
                                 KDJ.BO.log("[sortManager] root updated")
                                 if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                                     // root nodes reorder completed
-                                    //KDJ.BO.worker.terminate();
                                     if (KDJ.BO.hasOwnProperty('onReorderComplete') && typeof KDJ.BO.onReorderComplete === "function") {
                                         KDJ.BO.onReorderComplete();
                                     }
@@ -127,7 +124,6 @@ KDJ.BO.worker.onMessageHandler = function (e) {
                         KDJ.BO.nodesProcessed = KDJ.BO.nodesProcessed + 1;
                         if (KDJ.BO.nodesProcessed === KDJ.BO.totalNodes) {
                             // root nodes reorder completed
-                            //KDJ.BO.worker.terminate();
                             if (KDJ.BO.hasOwnProperty('onReorderComplete') && typeof KDJ.BO.onReorderComplete === "function") {
                                 KDJ.BO.onReorderComplete();
                             }

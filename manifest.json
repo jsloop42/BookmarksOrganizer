@@ -19,6 +19,5 @@
         "48": "res/icons/bo-48.png",
         "128": "res/icons/bo-128.png"
     },
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "offline_enabled": true
 }
