@@ -7,8 +7,6 @@ Bookmarks Organizer helps in keeping the bookmarks sorted. It monitors for newly
 
 1. There are max write limits set by the browser so that the sync servers are not abused. So only a certain number of move operations can be performed per session in a given interval of time.
 
-2. Also when you launch the browser, if bookmarks syncing is enabled, then the extension will use resources depending on the number of bookmarks changed. If this is making your system slow, you can disable the extension and re-enable it once the sync is completed.
-
 #### Install
 
 [<img src='https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png'>](https://chrome.google.com/webstore/detail/bookmarks-organizer/cjdenbocfdbjohomdaojaokiffjbnaca)
