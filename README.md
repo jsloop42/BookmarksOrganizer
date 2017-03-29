@@ -22,3 +22,8 @@ Bookmarks Organizer helps in keeping the bookmarks sorted. It monitors for newly
 ##### Version 2.0.3
 
 * Made improvements to the sorting algorithm, so that when a node is added, it sorts the whole list to which the node is added, but only updates the node and the ones after it. This reduces the number of move API calls, leaving room for more operation before the max write limit is reached.
+
+#### Notice
+
+This program is not actively maintained as of now since I moved away from Google Chrome.  
+Known issue: Sorting continues cycling if bookmarks have no name.
