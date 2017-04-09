@@ -1,7 +1,7 @@
 // Sort Manager
 // Loads and communicates with sort worker
 // Loaded by event.js and main.js
-// (c) 2013 Jaseem V V. GNU GPL v3.
+// (c) 2013 int3h.xyz. GNU GPL v3.
 
 var KDJ = KDJ || {};
 KDJ.BO = KDJ.BO || {};

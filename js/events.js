@@ -1,7 +1,7 @@
 // Events
 // This file is loaded when bookmark events occur.
 // event.js and main.js does not interact with each other. They are entirely different files with different flows.
-// (c) 2013 Jaseem V V. GNU GPL v3.
+// (c) 2013 int3h.xyz. GNU GPL v3.
 
 var KDJ = KDJ || {};
 KDJ.BO = KDJ.BO || {};
@@ -29,6 +29,8 @@ KDJ.BO = {
         KDJ.BO.totalNodes = 0;
         // Avoid processing bookmarks if import is in progress. Also avoid processing if reorder is triggered from the UI.
         if ((!KDJ.BO.isImportBegan && KDJ.BO.isImportEnded) || (boStatus == null || boStatus == "")) {
+            chrome.bookmarks.onMoved.removeListener(KDJ.BO.onBookmarkChange);
+            chrome.bookmarks.onCreated.removeListener(KDJ.BO.onBookmarkChange);
             KDJ.BO.init(id, node);
         }
     },
@@ -62,6 +64,7 @@ KDJ.BO = {
     onReorderComplete: function () {
         //KDJ.BO.worker.terminate();
         KDJ.BO.log("task completed");
+        chrome.bookmarks.onCreated.addListener(KDJ.BO.onBookmarkChange);
     }
 };
 
