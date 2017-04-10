@@ -30,7 +30,6 @@ KDJ.BO = {
         // Avoid processing bookmarks if import is in progress. Also avoid processing if reorder is triggered from the UI.
         if ((!KDJ.BO.isImportBegan && KDJ.BO.isImportEnded) || (boStatus == null || boStatus == "")) {
             chrome.bookmarks.onMoved.removeListener(KDJ.BO.onBookmarkChange);
-            chrome.bookmarks.onCreated.removeListener(KDJ.BO.onBookmarkChange);
             KDJ.BO.init(id, node);
         }
     },
@@ -60,11 +59,11 @@ KDJ.BO = {
                 });
             }
         });
+        chrome.bookmarks.onMoved.addListener(KDJ.BO.onBookmarkChange);
     },
     onReorderComplete: function () {
         //KDJ.BO.worker.terminate();
         KDJ.BO.log("task completed");
-        chrome.bookmarks.onCreated.addListener(KDJ.BO.onBookmarkChange);
     }
 };
 
